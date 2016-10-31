@@ -4,7 +4,6 @@
 #include <Adafruit_CircuitPlayground.h>
 
 
-
 namespace String_ {
     //%
     StringData *charAt(StringData *s, int pos) {
@@ -149,30 +148,27 @@ namespace Math_ {
     }
 }
 
-#if 0
 namespace Array_ {
     //%
     RefCollection *mk(uint32_t flags)
     {
-      return new RefCollection(flags);
+      return 0;
     }
     //%
-    int length(RefCollection *c) { return c->length(); }
+    int length(RefCollection *c) { return 0; }
     //%
-    void push(RefCollection *c, uint32_t x) { c->push(x); }
+    void push(RefCollection *c, uint32_t x) { }
     //%
-    uint32_t getAt(RefCollection *c, int x) { return c->getAt(x); }
+    uint32_t getAt(RefCollection *c, int x) { return 0; }
     //%
-    void removeAt(RefCollection *c, int x) { c->removeAt(x); }
+    void removeAt(RefCollection *c, int x) {  }
     //%
-    void setAt(RefCollection *c, int x, uint32_t y) { c->setAt(x, y); }
+    void setAt(RefCollection *c, int x, uint32_t y) {  }
     //%
-    int indexOf(RefCollection *c, uint32_t x, int start) { return c->indexOf(x, start); }
+    int indexOf(RefCollection *c, uint32_t x, int start) { return 0; }
     //%
-    int removeElement(RefCollection *c, uint32_t x) { return c->removeElement(x); }
+    int removeElement(RefCollection *c, uint32_t x) { return 0; }
 }
-
-#endif
 
 #if 0
 // Import some stuff directly

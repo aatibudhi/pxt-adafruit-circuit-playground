@@ -170,36 +170,31 @@ namespace pxt {
 
   // A ref-counted collection of either primitive or ref-counted objects (String, Image,
   // user-defined record, another collection)
-  /*
   class RefCollection
     : public RefObject
   {
   public:
     // 1 - collection of refs (need decr)
     // 2 - collection of strings (in fact we always have 3, never 2 alone)
-    inline uint16_t getFlags() { return getVTable()->userdata; }
-    inline bool isRef() { return getFlags() & 1; }
-    inline bool isString() { return getFlags() & 2; }
+    inline uint16_t getFlags() { return 0; }
+    inline bool isRef() { return false; }
+    inline bool isString() { return false; }
 
-    std::vector<uint16_t> data;
+    RefCollection(uint16_t f) : RefObject(f) { }
 
-    RefCollection(uint16_t f);
+    inline bool in_range(int x) { return false; }
 
-    inline bool in_range(int x) {
-      return (0 <= x && x < (int)data.size());
-    }
+    inline int length() { return 0; }
 
-    inline int length() { return data.size(); }
+    void destroy() { }
+    void print() { }
 
-    void destroy();
-    void print();
-
-    void push(uint16_t x);
-    uint16_t getAt(int x);
-    void removeAt(int x);
-    void setAt(int x, uint16_t y);
-    int indexOf(uint16_t x, int start);
-    int removeElement(uint16_t x);
+    void push(uint16_t x) { }
+    uint16_t getAt(int x) { return 0; }
+    void removeAt(int x) { }
+    void setAt(int x, uint16_t y) { }
+    int indexOf(uint16_t x, int start) { return 0; }
+    int removeElement(uint16_t x) { return 0; }
   };
 
   struct MapEntry {
@@ -211,12 +206,10 @@ namespace pxt {
     : public RefObject
   {
   public:
-    std::vector<MapEntry> data;
-
-    RefMap();
-    void destroy();
-    void print();
-    int findIdx(uint16_t key);
+    RefMap() : RefObject(0) { }
+    void destroy() { }
+    void print() { }
+    int findIdx(uint16_t key) { return 0; }
   };
 
   // A ref-counted, user-defined JS object.
@@ -224,15 +217,11 @@ namespace pxt {
     : public RefObject
   {
   public:
-    // The object is allocated, so that there is space at the end for the fields.
-    uint16_t fields[];
-
     RefRecord(uint16_t v) : RefObject(v) {}
-
-    uint16_t ld(int idx);
-    uint16_t ldref(int idx);
-    void st(int idx, uint16_t v);
-    void stref(int idx, uint16_t v);
+    uint16_t ld(int idx) { return 0; }
+    uint16_t ldref(int idx) { return 0; }
+    void st(int idx, uint16_t v) { }
+    void stref(int idx, uint16_t v) { }
   };
 
   // these are needed when constructing vtables for user-defined classes
@@ -296,8 +285,6 @@ namespace pxt {
     void print();
     RefRefLocal();
   };
-}
-*/
 }
 
 // The ARM Thumb generator in the JavaScript code is parsing

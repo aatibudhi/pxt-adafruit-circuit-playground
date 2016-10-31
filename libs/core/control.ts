@@ -6,9 +6,9 @@
 
 //neopixels.setPixelColorRgb(3, 0, 50, 0);
 
-let x = 1
+//let x = 1
 
-x = x + 1
+//x = x + 1
 
 
 /**
@@ -26,19 +26,21 @@ namespace control {
 
 }
 
-
+/*
 while (true) {
     if (playground.leftButton()) {
         let i = 9;
-        while (i >= 0 ) {
-            serial.print(i)
-            neopixels.setPixelColorRgb(i, 0, 255, 0)
-            serial.print(i)
-            serial.print(255)
+        let v = 255
+        while (i >= 0) {
+            neopixels.setPixelColorRgb(i, 250 - v, v, v)
             i = i - 1
+            v = v - 25
+            serial.print(i)
+            serial.print(v)
         }
     }
     if (playground.rightButton()) {
         neopixels.clearPixels()
     }
 }
+*/
