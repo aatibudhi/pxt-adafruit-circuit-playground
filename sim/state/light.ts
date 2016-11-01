@@ -63,7 +63,7 @@ namespace pxsim.light {
             case Animation.RainbowCycle: 
                 animationRainbowCycle(10); break;
             case Animation.Sparkle: 
-                animateSparkle(0xff, 0xff, 0xff, 0); break;
+                animateSparkle(0xff, 0xff, 0xff, 25); break;
             case Animation.RunningLights:
                 animateRunningLights(0xff,0xff,0x00, 50); break;
             case Animation.TheatreChase:
