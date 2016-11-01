@@ -57,6 +57,8 @@ namespace pxsim {
 namespace pxsim.light {
 
     export function showAnimation(animation: Animation) {
+        let state = board().neopixelState;
+        state.clearPixels();
         switch(animation) {
             case Animation.Rainbow: 
                 animateRainbow(350); break;
