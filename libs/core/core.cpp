@@ -170,11 +170,10 @@ namespace Array_ {
     int removeElement(RefCollection *c, uint32_t x) { return 0; }
 }
 
-#if 0
 // Import some stuff directly
 namespace pxt {
   //%
-  void registerWithDal(int id, int event, Action a);
+  void registerWithDal(int id, int event, Action a) { panic(51); }
   //%
   uint16_t runAction3(Action a, int arg0, int arg1, int arg2);
   //%
@@ -184,17 +183,16 @@ namespace pxt {
   //%
   uint16_t runAction0(Action a);
   //%
-  Action mkAction(int reflen, int totallen, int startptr);
+  Action mkAction(int reflen, int totallen, int startptr) { panic(51); return 0; }
   //%
-  RefRecord* mkClassInstance(int offset);
+  RefRecord* mkClassInstance(int offset) { panic(51); return 0; }
   //%
-  void RefRecord_destroy(RefRecord *r);
+  void RefRecord_destroy(RefRecord *r) { panic(51); }
   //%
-  void RefRecord_print(RefRecord *r);
+  void RefRecord_print(RefRecord *r) { panic(51); }
   //%
-  void debugMemLeaks();
+  void debugMemLeaks() { panic(51); }
 }
-#endif
 
 // Import some stuff directly
 namespace pxt {

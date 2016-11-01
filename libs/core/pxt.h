@@ -62,7 +62,7 @@ namespace pxt {
   int templateHash();
   int programHash();
   int getNumGlobals();
-  // RefRecord* mkClassInstance(int vtableOffset);
+  RefRecord* mkClassInstance(int vtableOffset);
 
   // The standard calling convention is:
   //   - when a pointer is loaded from a local/global/field etc, and incr()ed
@@ -176,25 +176,25 @@ namespace pxt {
   public:
     // 1 - collection of refs (need decr)
     // 2 - collection of strings (in fact we always have 3, never 2 alone)
-    inline uint16_t getFlags() { return 0; }
-    inline bool isRef() { return false; }
-    inline bool isString() { return false; }
+    inline uint16_t getFlags() { panic(51); return 0; }
+    inline bool isRef() { panic(51); return false; }
+    inline bool isString() { panic(51); return false; }
 
     RefCollection(uint16_t f) : RefObject(f) { }
 
-    inline bool in_range(int x) { return false; }
+    inline bool in_range(int x) { panic(51); return false; }
 
-    inline int length() { return 0; }
+    inline int length() { panic(51); return 0; }
 
-    void destroy() { }
-    void print() { }
+    void destroy() { panic(51); }
+    void print() { panic(51); }
 
-    void push(uint16_t x) { }
-    uint16_t getAt(int x) { return 0; }
-    void removeAt(int x) { }
-    void setAt(int x, uint16_t y) { }
-    int indexOf(uint16_t x, int start) { return 0; }
-    int removeElement(uint16_t x) { return 0; }
+    void push(uint16_t x) { panic(51); }
+    uint16_t getAt(int x) { panic(51); return 0; }
+    void removeAt(int x) { panic(51); }
+    void setAt(int x, uint16_t y) { panic(51); }
+    int indexOf(uint16_t x, int start) { panic(51); return 0; }
+    int removeElement(uint16_t x) { panic(51); return 0; }
   };
 
   struct MapEntry {
@@ -207,9 +207,9 @@ namespace pxt {
   {
   public:
     RefMap() : RefObject(0) { }
-    void destroy() { }
-    void print() { }
-    int findIdx(uint16_t key) { return 0; }
+    void destroy() { panic(51); }
+    void print() { panic(51); }
+    int findIdx(uint16_t key) { panic(51);; return 0; }
   };
 
   // A ref-counted, user-defined JS object.
@@ -217,11 +217,11 @@ namespace pxt {
     : public RefObject
   {
   public:
-    RefRecord(uint16_t v) : RefObject(v) {}
-    uint16_t ld(int idx) { return 0; }
-    uint16_t ldref(int idx) { return 0; }
-    void st(int idx, uint16_t v) { }
-    void stref(int idx, uint16_t v) { }
+    RefRecord(uint16_t v) : RefObject(v) { }
+    uint16_t ld(int idx) { panic(51); return 0; }
+    uint16_t ldref(int idx) { panic(51); return 0; }
+    void st(int idx, uint16_t v) { panic(51); }
+    void stref(int idx, uint16_t v) { panic(51); }
   };
 
   // these are needed when constructing vtables for user-defined classes
