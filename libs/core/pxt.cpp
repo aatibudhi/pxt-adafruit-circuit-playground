@@ -437,19 +437,24 @@ namespace pxt {
 
     Serial.print("Allocating globals:");
     Serial.println(numGlobals = getNumGlobals());
-    
+
     globals = allocate((uint16_t)numGlobals<<2);
 
     Serial.print("Globals allocated at =");
     Serial.println((uint16_t)globals);
+
 
     // just compare the first word
     checkStr(BYTECODE_WORD(0) == 0x8E70 &&
              (uint16_t)templateHash() == (uint16_t)PC(4),
              ":( Failed partial flash",0);
 
+    // panic(7);
     uint16_t startptr = (uint16_t)bytecode;
     startptr += 48; // header
+    
+    Serial.print("startptr = ");
+    Serial.println((uint16_t)startptr);
 
     startptr >>= 1;
     ((uint16_t (*)())startptr)();
