@@ -458,8 +458,6 @@ namespace pxt {
     pxt::debugMemLeaks();
 #endif
 
-    //Serial.println("done");
-
     return;
   }
 

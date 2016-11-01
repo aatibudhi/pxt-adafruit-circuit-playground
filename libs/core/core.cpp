@@ -173,7 +173,7 @@ namespace Array_ {
 // Import some stuff directly
 namespace pxt {
   //%
-  void registerWithDal(int id, int event, Action a) { panic(51); }
+  void registerWithDal(int id, int event, Action a) { }
   //%
   uint16_t runAction3(Action a, int arg0, int arg1, int arg2);
   //%
