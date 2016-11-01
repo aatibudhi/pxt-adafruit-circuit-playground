@@ -18,12 +18,18 @@ enum MotionAxis
 enum Animation
 {
     Rainbow,
-    Sparkle
+    RainbowCycle,
+    Sparkle,
+    RunningLights,
+    TheatreChase,
+    Fire
 }
+
 
 enum Drawing
 {
-    Rainbow
+    Rainbow,
+    Comet
 }
 
 enum Note
@@ -250,6 +256,16 @@ void playTone(uint16_t frequency, uint16_t time = 250)
 //% color=#00a7e9 weight=50
 namespace light
 {
+
+/**
+* Show a preset animation. eg: Rainbow
+*/
+//% async blockId="showAnimation" block="show animation %animation"
+//% weight=95
+void showAnimation(Animation animation)
+{
+
+}
 
 /**
 * Show a preset drawing. eg: Rainbow

@@ -156,6 +156,13 @@ declare namespace music {
 declare namespace light {
 
     /**
+     * Show a preset animation. eg: Rainbow
+     */
+    //% async blockId="showAnimation" block="show animation %animation"
+    //% weight=95 shim=light::showAnimation
+    function showAnimation(animation: Animation): void;
+
+    /**
      * Show a preset drawing. eg: Rainbow
      */
     //% blockId="showDrawing" block="show %drawing"

@@ -41,33 +41,214 @@ namespace pxsim {
     }
 
     export enum Animation {
-        Rainbow, 
-        Sparkle
+        Rainbow,
+        RainbowCycle,
+        Sparkle,
+        RunningLights,
+        TheatreChase,
+        Fire
     }
     export enum Drawing {
-        Rainbow
+        Rainbow,
+        Comet
     }
 }
 
 namespace pxsim.light {
 
-    export function animate(animation: Animation, seconds: number = 1) {
+    export function showAnimation(animation: Animation) {
         switch(animation) {
             case Animation.Rainbow: 
-                animateRainbow(seconds * 1000); break;
+                animateRainbow(350); break;
+            case Animation.RainbowCycle: 
+                animationRainbowCycle(10); break;
             case Animation.Sparkle: 
-                animateSparkle(seconds * 1000); break;
+                animateSparkle(0xff, 0xff, 0xff, 0); break;
+            case Animation.RunningLights:
+                animateRunningLights(0xff,0xff,0x00, 50); break;
+            case Animation.TheatreChase:
+                animateTheatreChase(0xff,0,0,100); break;
+            case Animation.Fire: 
+                animateFire(55, 120, 40); break;
             default:
         }
     }
 
-    function animateRainbow(ms: number) {
-
+    let pixeln = 0;
+    function animateRainbow(SpeedDelay: number) {
+        let state = board().neopixelState;
+        setPixelColor(pixeln++, colorWheel(pixeln *25));
+        if (pixeln == state.NUM_PIXELS + 1) {
+            pixeln = 0;
+            clearPixels();
+        }
+        runtime.queueDisplayUpdate();
+        
+        let cb = getResume();
+        setTimeout(() => {
+            runtime.queueDisplayUpdate();
+            cb() }, SpeedDelay)
     }
 
-    function animateSparkle(ms: number) {
+    function animationRainbowCycle(Speed: number) {
+        let state = board().neopixelState;
+        // Make an offset based on the current millisecond count scaled by the current speed.
+        let offset = control.millis() / Speed;
+        // Loop through each pixel and set it to an incremental color wheel value.
+        for(let i=0; i<state.NUM_PIXELS; ++i) {   
+            //CircuitPlayground.strip.setPixelColor(i, CircuitPlayground.colorWheel(((i * 256 / 10) + offset) & 255));
+            setPixelColor(i, colorWheel(((i * 256 / 10) + offset) & 255));
+        }
 
+        let cb = getResume();
+        setTimeout(() => {
+            runtime.queueDisplayUpdate();
+            cb() }, 1)
     }
+
+    function animateSparkle(red: number, green: number, blue: number, SpeedDelay: number) {
+        let state = board().neopixelState;
+        let Pixel = getRandomInt(0, state.NUM_PIXELS);
+        setPixelColorRgb(Pixel,red,green,blue);
+
+        let cb = getResume();
+        runtime.queueDisplayUpdate();
+
+        setTimeout(() => {   
+            setPixelColorRgb(Pixel,0,0,0);
+            cb() }, SpeedDelay)
+    }
+
+    let Position = 0;
+    function animateRunningLights(red: number, green: number, blue: number, WaveDelay: number) {
+        let state = board().neopixelState;
+        Position++; // = 0; //Position + Rate;
+        
+        for(let i=0; i<state.NUM_PIXELS; i++) {
+            // sine wave, 3 offset waves make a rainbow!
+            //float level = sin(i+Position) * 127 + 128;
+            //setPixel(i,level,0,0);
+            //float level = sin(i+Position) * 127 + 128;
+            setPixelColorRgb(i,((Math.sin(i+Position) * 127 + 128)/255)*red,
+                    ((Math.sin(i+Position) * 127 + 128)/255)*green,
+                    ((Math.sin(i+Position) * 127 + 128)/255)*blue);
+        }
+        
+        runtime.queueDisplayUpdate();
+
+        var cb = getResume();
+        if (WaveDelay <= 0)
+            cb();
+        else {
+            setTimeout(function () {
+                if (Position == (state.NUM_PIXELS*2)) {
+                    Position = 0;
+                }
+                runtime.queueDisplayUpdate();
+                cb();
+            }, WaveDelay);
+        }
+    }
+
+    let q = 0;
+    function animateTheatreChase(red: number, green: number, blue: number, SpeedDelay: number) {
+        let state = board().neopixelState;
+        
+        for (let i=0; i < state.NUM_PIXELS; i=i+3) {
+            setPixelColorRgb(i+q, red, green, blue);    //turn every third pixel on
+        }
+        runtime.queueDisplayUpdate();
+        
+        var cb = getResume();
+        if (SpeedDelay <= 0)
+            cb();
+        else {
+            setTimeout(function () {
+                for (let i=0; i < state.NUM_PIXELS; i=i+3) {
+                    setPixelColorRgb(i+q, 0,0,0);        //turn every third pixel off
+                }
+                runtime.queueDisplayUpdate();
+
+                q++;
+                if (q == 3) {
+                    q = 0;
+                }
+                cb();
+            }, SpeedDelay);
+        }
+    }
+
+    function setAll(rgb: number) {
+        let state = board().neopixelState;
+        for(let i = 0;i <state.NUM_PIXELS; i++) {
+            setPixelColor(i, rgb);
+        }
+    }
+
+    function animateFire(Cooling: number, Sparking: number, SpeedDelay: number) {
+        let state = board().neopixelState;
+        
+        let heat: number[] = [];
+        let cooldown: number;
+        
+        // Step 1.  Cool down every cell a little
+        for(let i = 0; i < state.NUM_PIXELS; i++) {
+            cooldown = getRandomInt(0, ((Cooling * 10) / state.NUM_PIXELS) + 2);
+            if(cooldown>heat[i]) {
+                heat[i]=0;
+            } else {
+                heat[i]=(heat[i]||0)-cooldown;
+            }
+        }
+  
+        // Step 2.  Heat from each cell drifts 'up' and diffuses a little
+        for(let k= state.NUM_PIXELS - 1; k >= 2; k--) {
+            heat[k] = (heat[k - 1] + heat[k - 2] + heat[k - 2]) / 3;
+        }
+    
+        // Step 3.  Randomly ignite new 'sparks' near the bottom
+        if((Math.random()*255) < Sparking ) {
+            let y = getRandomInt(0,3);
+            heat[y] = heat[y] + getRandomInt(160,255);
+            //heat[y] = random(160,255);
+        }
+
+        // Step 4.  Convert heat to LED colors
+        for(let j = 0; j < state.NUM_PIXELS; j++) {
+            setPixelHeatColor(j, heat[j] );
+        }
+
+        runtime.queueDisplayUpdate(); //showStrip
+//        control.delay(SpeedDelay);        
+
+        var cb = getResume();
+        if (SpeedDelay <= 0)
+            cb();
+        else {
+            setTimeout(function () {
+                cb();
+            }, SpeedDelay);
+        }
+    }
+
+    function setPixelHeatColor(Pixel: number, temperature: number) {
+        // Scale 'heat' down from 0-255 to 0-191
+        let t192 = Math.round((temperature/255.0)*191);
+        
+        // calculate ramp up from
+        let heatramp = t192 & 0x3F; // 0..63
+        heatramp <<= 2; // scale up to 0..252
+        
+        // figure out which third of the spectrum we're in:
+        if( t192 > 0x80) {                     // hottest
+            setPixelColorRgb(Pixel, 255, 255, heatramp);
+        } else if( t192 > 0x40 ) {             // middle
+            setPixelColorRgb(Pixel, 255, heatramp, 0);
+        } else {                               // coolest
+            setPixelColorRgb(Pixel, heatramp, 0, 0);
+        }
+    }
+
 
     function getRandomInt(min: number, max: number): number {
         min = Math.ceil(min);
@@ -79,6 +260,8 @@ namespace pxsim.light {
         switch(drawing) {
             case Drawing.Rainbow: 
                 showRainbow(); break;
+            case Drawing.Comet: 
+                showComet(); break;
             default:
         }
     }
@@ -87,6 +270,14 @@ namespace pxsim.light {
         let state = board().neopixelState;
         for (let i = 0; i < state.NUM_PIXELS; i++) {
             setPixelColor(i, colorWheel(i * 25));
+        }
+        runtime.queueDisplayUpdate();
+    }
+
+    function showComet() {
+        let state = board().neopixelState;
+        for (let i = 0; i < state.NUM_PIXELS; i++) {
+            setPixelColorRgb(i, 255-(i*25), 0, 0);
         }
         runtime.queueDisplayUpdate();
     }
@@ -115,6 +306,7 @@ namespace pxsim.light {
     }
 
     export function setPixelColorRgb(pixel: number, red: number, green: number, blue: number) {
+        console.log(`${red} ${green} ${blue}`)
         let state = board().neopixelState;
         if (pixel < 0
             || pixel >= state.NUM_PIXELS)

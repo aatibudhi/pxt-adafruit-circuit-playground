@@ -415,8 +415,8 @@ namespace pxsim.visuals {
 
                 let hsl = visuals.rgbToHsl(rgb);
                 let [h, s, l] = hsl;
-                // at least 70% luminosity
-                l = Math.max(l, 60);
+                // at least 10% luminosity
+                l = Math.max(l, 10);
                 if (p_outer) svg.fill(p_outer, `hsl(${h}, ${s}%, ${l}%)`);
                 if (p_inner) svg.fill(p_inner, `hsl(${h}, ${s}%, ${l}%)`);
                 if (p_outer) svg.filter(p_outer, `url(#neopixelglow)`);
