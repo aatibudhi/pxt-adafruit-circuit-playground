@@ -294,6 +294,16 @@ void setPixelColor(uint8_t p, uint32_t c)
 }
 
 /**
+* Sets the RGB color on a pixel
+*/
+//% weight=85 blockGap=8
+//% blockId="setPixelColorRgb" block="set pixel %p|to color %c=pixelcolor"
+void setPixelColorRgb(uint8_t p, uint16_t r, uint16_t g, uint16_t b)
+{
+    CircuitPlayground.setPixelColor(p, r, g, b);
+}
+
+/**
 * Clear pixels
 */
 //% weight=84 blockGap=8

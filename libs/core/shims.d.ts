@@ -186,6 +186,13 @@ declare namespace light {
     function setPixelColor(p: uint8, c: number): void;
 
     /**
+     * Sets the RGB color on a pixel
+     */
+    //% weight=85 blockGap=8
+    //% blockId="setPixelColorRgb" block="set pixel %p|to color %c=pixelcolor" shim=light::setPixelColorRgb
+    function setPixelColorRgb(p: uint8, r: uint16, g: uint16, b: uint16): void;
+
+    /**
      * Clear pixels
      */
     //% weight=84 blockGap=8

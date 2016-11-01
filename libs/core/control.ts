@@ -15,16 +15,16 @@ namespace control {
 
 /*
 while (true) {
-    if (playground.leftButton()) {
+    if (sensors.button(Button.Left)) {
         let i = 9;
         let v = 255
         while (i >= 0) {
-            neopixels.setPixelColorRgb(i, 250 - v, v, v)
+            light.setPixelColorRgb(i, v, 255 - v, v)
             i = i - 1
             v = v - 25
-            serial.print(i)
-            serial.print(v)
         }
+    } else if (sensors.button(Button.Right)) {
+            light.clearPixels()
     }
 }
 */
