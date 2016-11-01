@@ -1,20 +1,7 @@
-// here we go!
-
-//playground.redLED(true)
-
-//serial.print(254);
-
-//neopixels.setPixelColorRgb(3, 0, 50, 0);
-
-//let x = 1
-
-//x = x + 1
-
-
 /**
 * Runtime and event utilities.
 */
-//% weight=1 color="#333333"
+//% weight=90 color="#EEDA47"
 //% advanced=true
 namespace control {
 
@@ -25,6 +12,7 @@ namespace control {
     export function panic(code: number) { }
 
 }
+
 
 /*
 while (true) {
@@ -38,9 +26,6 @@ while (true) {
             serial.print(i)
             serial.print(v)
         }
-    }
-    if (playground.rightButton()) {
-        neopixels.clearPixels()
     }
 }
 */

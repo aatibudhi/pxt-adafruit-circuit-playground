@@ -403,9 +403,15 @@ namespace pxsim.visuals {
             let neopixels = state.neopixelState.getNeoPixels();
             for (let i = 0; i < state.neopixelState.NUM_PIXELS; i++) {
                 let rgb = neopixels[i];
-                if (!rgb) continue;
 				let p_outer = this.element.getElementById(`LED${i}_OUTER`) as SVGPathElement;
 				let p_inner = this.element.getElementById(`LED${i}`) as SVGPathElement;
+                if (!rgb) {
+                    // Clear the pixel
+                    svg.fill(p_outer, null);
+                    svg.fill(p_inner, null);
+                    svg.filter(p_outer, null);
+                    continue;
+                }
 
                 let hsl = visuals.rgbToHsl(rgb);
                 let [h, s, l] = hsl;
@@ -564,10 +570,10 @@ namespace pxsim.visuals {
 
         private updateTemperature() {
             let state = this.board;
-            if (!state || !state.thermometerState.usesTemperature) return;
+            if (!state || !state.thermometerState || !state.thermometerState.usesTemperature) return;
 
-            let tmin = -5;
-            let tmax = 50;
+            let tmin = state.thermometerState.unit == ThermometerUnit.Celsius ? -5 : 0;
+            let tmax = state.thermometerState.unit == ThermometerUnit.Celsius ? 50 : 120;
             if (!this.thermometer) {
                 let gid = "gradient-thermometer";
                 this.thermometerGradient = svg.linearGradient(this.defs, gid);
@@ -596,7 +602,7 @@ namespace pxsim.visuals {
             let t = Math.max(tmin, Math.min(tmax, state.thermometerState.temperature))
             let per = Math.floor((state.thermometerState.temperature - tmin) / (tmax - tmin) * 100)
             svg.setGradientValue(this.thermometerGradient, 100 - per + "%");
-            this.thermometerText.textContent = t + "°C";
+            this.thermometerText.textContent = t + "°" + (state.thermometerState.unit == ThermometerUnit.Celsius ? 'C' : 'F');
         }
 
         private updateButtonAB() {

@@ -2,7 +2,7 @@
 namespace pxsim {
     export class CPNeoPixelState {
         public NUM_PIXELS = 10;
-        private neopixels: Map<[number, number, number]> = {};
+        private neopixels: [number, number, number][] = [];
         private CPLAY_NEOPIXELPIN = 17;
         private brightness: number = 20;
 
@@ -18,17 +18,92 @@ namespace pxsim {
             return this.brightness;
         }
 
-        public getNeoPixels(): Map<[number, number, number]> {
+        public getNeoPixels(): [number, number, number][] {
             return this.neopixels;
         }
 
-        public clearPixels() {
-            this.neopixels = {};
+        public rotate(offset: number = 1, reverse?: boolean) {
+            for (let i = 0; i < offset; i++) {
+                if(reverse)
+                    this.neopixels.unshift(this.neopixels.pop());
+                else
+                    this.neopixels.push(this.neopixels.shift());
+            }
         }
+
+        public clearPixels() {
+            this.neopixels = [];
+        }
+    }
+
+    export class RedLEDState {
+        on: boolean = false;
+    }
+
+    export enum Animation {
+        Rainbow, 
+        Sparkle
+    }
+    export enum Drawing {
+        Rainbow
     }
 }
 
-namespace pxsim.neopixels {
+namespace pxsim.light {
+
+    export function animate(animation: Animation, seconds: number = 1) {
+        switch(animation) {
+            case Animation.Rainbow: 
+                animateRainbow(seconds * 1000); break;
+            case Animation.Sparkle: 
+                animateSparkle(seconds * 1000); break;
+            default:
+        }
+    }
+
+    function animateRainbow(ms: number) {
+
+    }
+
+    function animateSparkle(ms: number) {
+
+    }
+
+    function getRandomInt(min: number, max: number): number {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
+
+    export function showDrawing(drawing: Drawing) {
+        switch(drawing) {
+            case Drawing.Rainbow: 
+                showRainbow(); break;
+            default:
+        }
+    }
+
+    function showRainbow() {
+        let state = board().neopixelState;
+        for (let i = 0; i < state.NUM_PIXELS; i++) {
+            setPixelColor(i, colorWheel(i * 25));
+        }
+        runtime.queueDisplayUpdate();
+    }
+
+    export function rotate(offset: number = 1) {
+        let state = board().neopixelState;
+        if (offset < 0
+            || offset >= state.NUM_PIXELS)
+            return;
+        state.rotate(offset);
+        runtime.queueDisplayUpdate()
+    }
+
+    export function redLED(value: boolean) {
+        board().redLEDState.on = value;
+        runtime.queueDisplayUpdate()
+    }
 
     export function setPixelColor(pixel: number, rgb: number) {
         let state = board().neopixelState;
@@ -65,6 +140,10 @@ namespace pxsim.neopixels {
         }
         WheelPos -= 170;
         return packRGB(WheelPos * 3, 255 - WheelPos * 3, 0);
+    }
+
+    export function rgb(r: number, g: number, b: number): number {
+        return packRGB(r, g, b);
     }
 
     function packRGB(a: number, b: number, c: number): number {

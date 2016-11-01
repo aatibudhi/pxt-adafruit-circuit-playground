@@ -1,10 +1,30 @@
 #include <Adafruit_CircuitPlayground.h>
 
-enum class Button
+enum Button
 {
+    //% block=left
     Left = 1, //CPLAY_LEFTBUTTON,
+    //% block=right
     Right = 2 //CPLAY_RIGHTBUTTON
 };
+
+enum MotionAxis
+{
+    X = 0,
+    Y = 1,
+    Z = 2  
+}
+
+enum Animation
+{
+    Rainbow,
+    Sparkle
+}
+
+enum Drawing
+{
+    Rainbow
+}
 
 enum Note
 {
@@ -37,7 +57,7 @@ enum Note
     B = 494
 };
 
-enum class CapacityPin
+enum CapacityPin
 {
     //% block="RX #0"
     P0 = 0,
@@ -57,57 +77,105 @@ enum class CapacityPin
     P12 = 12
 };
 
+/**
+ * Well known colors
+ */
+enum Color {
+    //% block=red blockIdentity=light.color
+    Red = 0xFF0000,
+    //% block=orange blockIdentity=light.color
+    Orange = 0xFFA500,
+    //% block=yellow blockIdentity=light.color
+    Yellow = 0xFFFF00,
+    //% block=green blockIdentity=light.color
+    Green = 0x00FF00,
+    //% block=blue blockIdentity=light.color
+    Blue = 0x0000FF,
+    //% block=indigo blockIdentity=light.color
+    Indigo = 0x4b0082,
+    //% block=violet blockIdentity=light.color
+    Violet = 0x8a2be2,
+    //% block=purple blockIdentity=light.color
+    Purple = 0xFF00FF,
+    //% block=white blockIdentity=light.color
+    White = 0xFFFFFF
+}
+
+enum TemperatureUnit {
+    Celsius,
+    Fahrenheit
+}
+
 
 /**
-* Playground
+* Sensors
 */
 //% color=#FE49C9 weight=99
-namespace playground
+namespace sensors
 {
+/**
+* Gets a value indicating if the left button is pressed.
+*/
+//% blockId="leftButton" block="%b|button pressed?" weight=40
+//% weight=85
+boolean button(Button b)
+{
+    if (b == Button::Left) return CircuitPlayground.leftButton();
+    else return CircuitPlayground.rightButton();
+}
+
 
 /**
-* Gets a value indicating if the slide switched is on.
+* Reads the number of taps
 */
-//% blockId="slideSwitch" block="slide switch"
-boolean slideSwitch()
-{
-    return CircuitPlayground.slideSwitch();
+//% blockId="getAccelTap" block="taps"
+//% weight=84
+uint8_t taps() {
+    return CircuitPlayground.getAccelTap();
 }
 
 /**
 * Reads the light level between 0 and 1023.
 */
-//% blockId="lightSensor" block="light sensor"
-uint16_t lightSensor()
+//% blockId="lightSensor" block="light level"
+//% weight=80
+uint16_t lightLevel()
 {
     return CircuitPlayground.lightSensor();
 }
+
 /**
-* Just turn on/off the red #13 LED
-* @param on a value to turn on/off the LED, eg: true
+* Reads the accelerometer's Motion
+* @param axis the axis of rotation. X is aligned with the buttons, Y going accross the buttons, Z perpendicular to the board.
 */
-//% blockId="redled" block="red led %on"
-void redLED(boolean on)
-{
-    CircuitPlayground.redLED(on);
+//% blockId="motion" block="motion %axis"
+//% weight=82
+int motion(MotionAxis axis) {
+    switch(axis) {
+        case Motion::Y: return CircuitPlayground.motionY();
+        case Motion::Z: return CircuitPlayground.motionZ();
+        default: return CircuitPlayground.motionX();
+    }
 }
 
 /**
-* Gets a value indicating if the left button is pressed.
+* Reads the sound level between 0 and 1023.
 */
-//% blockId="leftButton" block="left button" weight=40
-boolean leftButton()
+//% blockId="soundSensor" block="sound"
+//% weight=60
+uint16_t sound()
 {
-    return CircuitPlayground.leftButton();
+    return CircuitPlayground.soundSensor();
 }
 
 /**
-* Gets a value indicating if the right button is pressed.
+* Gets a value indicating if the slide switched is on.
 */
-//% blockId="rightButton" block="right button" weight=39
-boolean rightButton()
+//% blockId="slideSwitch" block="slide switch"
+//% weight=55
+boolean slideSwitch()
 {
-    return CircuitPlayground.rightButton();
+    return CircuitPlayground.slideSwitch();
 }
 
 /**
@@ -116,36 +184,10 @@ boolean rightButton()
 * @param samples
 */
 //% blockId="readCap" block="read capacity at pin %pin"
+//% weight=50
 uint16_t readCap(CapacityPin pin, uint16_t samples = 10)
 {
     return CircuitPlayground.readCap((uint8_t)pin, samples);
-}
-
-/**
-* Reads the accelerometer's Motion X
-*/
-//% blockId="motionX" block="motion X"
-int motionX() {
-    //TODO: should return float
-    return CircuitPlayground.motionX();
-}
-
-/**
-* Reads the accelerometer's Motion Y
-*/
-//% blockId="motionY" block="motion Y"
-int motionY() {
-    //TODO: should return float
-    return CircuitPlayground.motionY();
-}
-
-/**
-* Reads the accelerometer's Motion Z 
-*/
-//% blockId="motionZ" block="motion Z"
-int motionZ() {
-    //TODO: should return float
-    return CircuitPlayground.motionZ();
 }
 
 void setAccelRange(lis3dh_range_t range) {
@@ -156,23 +198,15 @@ void setAccelTap(uint8_t c, uint8_t clickthresh) {
     CircuitPlayground.setAccelTap(c, clickthresh);
 }
 
-uint8_t getAccelTap() {
-    return CircuitPlayground.getAccelTap();
-}
-
-
 /**
 * Reads the temperature.
 */
-//% blockId="temperatur" block="temperature"
-int temperature() {
+//% blockId="temperatur" block="temperature %unit"
+int temperature(TemperatureUnit unit) {
+    if (unit == TemperatureUnit::Celsius)
+        return CircuitPlayground.temperature();
+    else return CircuitPlayground.temperatureF();
     //TODO: should return float
-    return CircuitPlayground.temperature();
-}
-
-int temperatureF() {
-    //TODO: should return float
-    return CircuitPlayground.temperatureF();
 }
 
 }
@@ -181,7 +215,7 @@ int temperatureF() {
 /**
 * Functions for music / audio
 */
-//% color=#FFA702 weight=75
+//% color=#CC2936 weight=75
 namespace music
 {
 
@@ -208,64 +242,100 @@ void playTone(uint16_t frequency, uint16_t time = 250)
     CircuitPlayground.playTone(frequency, time);
 }
 
-/**
-* Reads the sound level between 0 and 1023.
-*/
-//% blockId="soundSensor" block="sound sensor"
-uint16_t soundSensor()
-{
-    return CircuitPlayground.soundSensor();
-}
-
 }
 
 /**
 * Functions to manipulate neopixels
 */
 //% color=#00a7e9 weight=50
-namespace neopixels
+namespace light
 {
+
 /**
-* Clear pixels
+* Show a preset drawing. eg: Rainbow
 */
-//% blockId="clearPixels" block="clear pixels"
-void clearPixels()
+//% blockId="showDrawing" block="show %drawing"
+//% weight=95
+void showDrawing(Drawing drawing)
 {
-    CircuitPlayground.clearPixels();
+
 }
+
+/**
+* Rotate the pixels forward.
+* @param offset number of pixels to rotate forward, eg: 1
+*/
+//% blockId="rotate" block="rotate pixels by %offset"
+//% weight=95
+void rotate(uint8_t offset = 1)
+{
+
+}
+
+/**
+* Just turn on/off the red #13 LED
+* @param on a value to turn on/off the LED, eg: true
+*/
+//% weight=90
+//% blockId="redled" block="red led %on"
+void redLED(boolean on)
+{
+    CircuitPlayground.redLED(on);
+}
+
 /**
 * Sets the RGB color on a pixel
 */
-//% blockId="setPixelColor" block="set pixel %p|to color %c"
+//% weight=85 blockGap=8
+//% blockId="setPixelColor" block="set pixel %p|to color %c=pixelcolor"
 void setPixelColor(uint8_t p, uint32_t c)
 {
     CircuitPlayground.setPixelColor(p, c);
 }
 
 /**
-* Sets the RGB color on a pixel
+* Clear pixels
 */
-//% blockId="setPixelColorRgb" block="set pixel %p|to red %c|green %g|blue %b"
-void setPixelColorRgb(uint8_t p, uint8_t r, uint8_t g, uint8_t b)
+//% weight=84 blockGap=8
+//% blockId="clearPixels" block="clear pixels"
+void clearPixels()
 {
-    CircuitPlayground.setPixelColor(p, r, g, b);
+    CircuitPlayground.clearPixels();
 }
+
 /**
 * Sets the neopixel brightness
+* @param Desired brightness. eg: 255
 */
+//% weight=80
 //% blockId="setBrightness" block="set brightness %b"
-void setBrightness(uint16_t b)
+//% advanced=true
+void setBrightness(uint16_t brightness)
 {
-    CircuitPlayground.setBrightness(b);
+    CircuitPlayground.setBrightness(brightness);
 }
 
 /**
 * Color wheel
 */
 //% blockId="colorWheel" block="color wheel %x"
+//% weight=10 blockGap=8
+//% advanced=true
 uint32_t colorWheel(uint8_t x)
 {
     return CircuitPlayground.colorWheel(x);
+}
+
+
+/**
+* Converts RGB channels into a color
+*/
+//% blockId="rgb" block="red %r|green %g|blue %b"
+//% weight=9
+//% advanced=true
+uint32_t rgb(uint8_t r, uint8_t g, uint8_t b)
+{
+    return r >> 16 | g >> 8 | r;
 }
 }
 
@@ -278,7 +348,7 @@ namespace serial {
 /**
 * Serial print
 */
-//% blockId="print" block="print %code"
+//% 
 void print(uint16_t code) {
     Serial.println(code);
 }
