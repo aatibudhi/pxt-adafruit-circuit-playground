@@ -65,11 +65,11 @@ namespace pxsim.light {
             case Animation.Sparkle: 
                 animateSparkle(0xff, 0xff, 0xff, 25); break;
             case Animation.RunningLights:
-                animateRunningLights(0xff,0xff,0x00, 50); break;
+                animateRunningLights(0xff,0xff,0x00, 100); break;
             case Animation.TheatreChase:
                 animateTheatreChase(0xff,0,0,100); break;
             case Animation.Fire: 
-                animateFire(55, 120, 40); break;
+                animateFire(100, 50, 150); break;
             default:
         }
     }
@@ -190,10 +190,11 @@ namespace pxsim.light {
         
         let heat: number[] = [];
         let cooldown: number;
+        let NUM_PIXELS = state.NUM_PIXELS / 2;
         
         // Step 1.  Cool down every cell a little
-        for(let i = 0; i < state.NUM_PIXELS; i++) {
-            cooldown = getRandomInt(0, ((Cooling * 10) / state.NUM_PIXELS) + 2);
+        for(let i = 0; i < NUM_PIXELS; i++) {
+            cooldown = getRandomInt(0, ((Cooling * 10) / NUM_PIXELS) + 2);
             if(cooldown>heat[i]) {
                 heat[i]=0;
             } else {
@@ -202,20 +203,21 @@ namespace pxsim.light {
         }
   
         // Step 2.  Heat from each cell drifts 'up' and diffuses a little
-        for(let k= state.NUM_PIXELS - 1; k >= 2; k--) {
+        for(let k= NUM_PIXELS - 1; k >= 2; k--) {
             heat[k] = (heat[k - 1] + heat[k - 2] + heat[k - 2]) / 3;
         }
     
         // Step 3.  Randomly ignite new 'sparks' near the bottom
         if((Math.random()*255) < Sparking ) {
-            let y = getRandomInt(0,3);
+            let y = getRandomInt(0,2);
             heat[y] = heat[y] + getRandomInt(160,255);
             //heat[y] = random(160,255);
         }
 
         // Step 4.  Convert heat to LED colors
-        for(let j = 0; j < state.NUM_PIXELS; j++) {
-            setPixelHeatColor(j, heat[j] );
+        for(let j = 0; j < NUM_PIXELS; j++) {
+            setPixelHeatColor(NUM_PIXELS-j-1, heat[j] );
+            setPixelHeatColor(NUM_PIXELS+j, heat[j] );
         }
 
         runtime.queueDisplayUpdate(); //showStrip
