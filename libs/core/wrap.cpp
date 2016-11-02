@@ -183,7 +183,7 @@ boolean slideSwitch()
 * @param pin the number of the pin
 * @param samples
 */
-//% blockId="readCap" block="read capacity at pin %pin"
+//% blockId="readCap" block="sense touch at pin %pin"
 //% weight=50
 uint16_t readCap(CapacityPin pin, uint16_t samples = 10)
 {
@@ -215,7 +215,7 @@ int temperature(TemperatureUnit unit) {
 /**
 * Functions for music / audio
 */
-//% color=#CC2936 weight=75
+//% color=#FF7D7D weight=75
 namespace music
 {
 
